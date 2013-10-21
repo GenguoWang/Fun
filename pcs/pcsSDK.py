@@ -4,6 +4,7 @@ import json
 import mimetypes
 import random
 import string
+import os
 
 _BOUNDARY_CHARS = string.digits + string.ascii_letters
 gApiKey = "jPNKG9NIr8o2gl0qeidwGddx"
@@ -14,6 +15,12 @@ gRefreshToken = "4.499b6935f2b7c3c9609d0472b50844f5.315360000.1697639866.2936395
 gAccessToken = "3.88de92b660bdf9aaa6178e071ca629bd.2592000.1384871866.2936395967-1489137"
 gAppRoot = "/apps/win8pan/"
 gDebug = True
+def getPath(path):
+    if len(path)==0:
+        return gAppRoot
+    if path[0] == '/':
+        return path
+    return gAppRoot + path
 def getAuthUrl():
     res = gBaseAuthUrl
     res += "?client_id="+gApiKey
@@ -39,8 +46,7 @@ def getQuota():
     return json.loads(res)
 
 def getMeta(path):
-    if len(path)==0 or (not path[0] == '/'):
-        path = gAppRoot + path
+    path = getPath(path)
     url = "https://pcs.baidu.com/rest/2.0/pcs/file"
     reqData = {}
     reqData["method"] = "meta"
@@ -53,8 +59,7 @@ def getMetas(paths):
     reqData = {}
     pathPara = {"list":[]}
     for path in paths:
-        if len(path)==0 or (not path[0] == '/'):
-            path = gAppRoot + path
+        path = getPath(path)
         pathPara["list"].append({"path":path})
     reqData["method"] = "meta"
     postData = {}
@@ -63,8 +68,7 @@ def getMetas(paths):
     return json.loads(res)
 
 def getFileList(path,by=None,order=None,limit=None):
-    if len(path)==0 or (not path[0] == '/'):
-        path = gAppRoot + path
+    path = getPath(path)
     url = "https://pcs.baidu.com/rest/2.0/pcs/file"
     reqData = {}
     reqData["method"] = "list"
@@ -78,14 +82,20 @@ def getFileList(path,by=None,order=None,limit=None):
     res = httpRequest(url,"get",reqData)
     return json.loads(res)
 
-def uploadFile(path,filePath,ondup="newcopy"):
-    #path need to have file name
-    if len(path)==0 or (not path[0] == '/'):
-        path = gAppRoot + path
+def uploadFile(path,filePath,newname=None,ondup=None):
+    path = getPath(path)
+    if not path[-1] == '/':
+        path += '/'
+    if newname:
+        path += newname
+    else:
+        path += os.path.split(filePath)[1]
     url = "https://pcs.baidu.com/rest/2.0/pcs/file"
     reqData = {}
     reqData["method"] = "upload"
     reqData["path"] = path
+    if ondup:
+        reqData["ondup"] = ondup
     res = httpRequest(url,"postfile",reqData,{},filePath)
     return json.loads(res)
     
@@ -126,4 +136,4 @@ def httpRequest(url,method,reqData,postData={},filename=""):
     return res
 
 #if _NAME_ == "main":
-uploadFile("1.txt","1.txt")
+#uploadFile("/aaa/bbb/ccc","/home/kingo/test")
