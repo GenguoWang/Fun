@@ -98,6 +98,15 @@ def uploadFile(path,filePath,newname=None,ondup=None):
         reqData["ondup"] = ondup
     res = httpRequest(url,"postfile",reqData,{},filePath)
     return json.loads(res)
+
+def addTask(source,path):
+    url = "https://pcs.baidu.com/rest/2.0/pcs/services/cloud_dl"
+    reqData = {}
+    reqData["method"] = "add_task"
+    reqData["source_url"] = source
+    reqData["save_path"] = getPath(path)
+    res = httpRequest(url,"get",reqData)
+    return json.loads(res)
     
 def httpRequest(url,method,reqData,postData={},filename=""):
     reqData["access_token"] = gAccessToken
@@ -135,5 +144,6 @@ def httpRequest(url,method,reqData,postData={},filename=""):
         print res
     return res
 
-#if _NAME_ == "main":
-#uploadFile("/aaa/bbb/ccc","/home/kingo/test")
+if __name__ == "__main__":
+    gDebug = True
+    addTask("http://www.baidu.com","index.html")
