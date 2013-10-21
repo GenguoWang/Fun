@@ -14,7 +14,7 @@ gBaseAuthUrl = "https://openapi.baidu.com/oauth/2.0/authorize"
 gRefreshToken = "4.499b6935f2b7c3c9609d0472b50844f5.315360000.1697639866.2936395967-1489137"
 gAccessToken = "3.88de92b660bdf9aaa6178e071ca629bd.2592000.1384871866.2936395967-1489137"
 gAppRoot = "/apps/win8pan/"
-gDebug = True
+gDebug = False
 def getPath(path):
     if len(path)==0:
         return gAppRoot
@@ -129,8 +129,8 @@ def httpRequest(url,method,reqData,postData={},filename=""):
     try:
         response = urllib2.urlopen(req)#,timeout=15)
         res = response.read()
-    except Exception,e:
-        print e.msg
+    except urllib2.HTTPError, error:
+        res = error.read()
     if gDebug:
         print res
     return res
