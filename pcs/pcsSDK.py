@@ -123,7 +123,7 @@ def httpRequest(url,method,reqData,postData={},filename=""):
         req = urllib2.Request(url)
     elif method=="postfile":
         boundary = ''.join(random.choice(_BOUNDARY_CHARS) for i in range(30))
-        pData = "--"+boundary+"\r\nContent-Disposition: form-data; name=\"%s\"; filename=\"%s\"\r\nContent-Type: application/octet-stream\r\n\r\n"%("file",filename)
+        pData = "--"+boundary+"\r\nContent-Disposition: form-data; name=\"%s\"; filename=\"%s\"\r\nContent-Type: application/octet-stream\r\n\r\n"%("file",str(filename))
         pData += open(filename, "rb").read()
         pData += "\r\n--" + boundary + "--\r\n"
         headers = {}
