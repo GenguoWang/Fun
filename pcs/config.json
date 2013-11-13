@@ -2,10 +2,10 @@
     "rarPath":"C:\\Program Files (x86)\\WinRAR\\Rar.exe",
     "path":[
         {
-            "local":"E:\\tmp",
-            "remote":"test3/",
-            "rar":false,
-            "rarName":"pcs"
+            "local":"E:\\VSProjects\\sjtujoineducation",
+            "remote":"backup/",
+            "rar":true,
+            "rarName":"sjtujoineducation"
         }
     ]
 }

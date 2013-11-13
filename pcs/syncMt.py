@@ -50,15 +50,17 @@ def syncToPcs(path,remote,rPath=""):
                 uploadList.append({"remotePath":remote+rPath,"localPath":tf})
         elif os.path.isdir(tf):
             syncToPcs(tf,rPath+f+"/")
-config = json.loads(open("config.json").read())
+workDir = os.path.dirname(__file__)
+config = json.loads(open(os.path.join(workDir,"config.json")).read())
 rarPaht = ""
 if "rarPath" in config:
     rarPath = config["rarPath"]
-os.system("del /f/s/q tmp\\*")
+os.system("del /f/s/q "+os.path.join(workDir,"tmp\\*"))
 for backPath in config["path"]:
     if "rar" in backPath and backPath["rar"]:
-        subprocess.call([rarPath,"a","-r","-ep1","tmp\\"+backPath["rarName"],backPath["local"]])
-        uploadList.append({"remotePath":backPath["remote"],"localPath":"tmp\\"+backPath["rarName"]+".rar"})
+        print "rar "+backPath["local"]
+        subprocess.call([rarPath,"a","-idq","-r","-ep1",os.path.join(workDir,"tmp\\"+backPath["rarName"]),backPath["local"]])
+        uploadList.append({"remotePath":backPath["remote"],"localPath":os.path.join(workDir,"tmp\\"+backPath["rarName"]+".rar")})
     else:
         syncToPcs(backPath["local"],backPath["remote"])
 print "begin upload"
