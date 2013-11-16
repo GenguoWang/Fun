@@ -2,12 +2,13 @@
 # -*- coding: utf-8 -*- 
 import subprocess
 import os
+import shutil
 import sys
 import pcsSDK
 import threading
 import json
 lock = threading.Lock()
-maxThreadNum = 50
+maxThreadNum = 10
 uploadList = []
 index=0
 reload(sys)
@@ -24,7 +25,14 @@ def uploadWorker():
             lock.release()
             return
         sys.stdout.write("uploading "+filename["localPath"]+"\n")
-        pcsSDK.uploadFile(filename["remotePath"],filename["localPath"],ondup="overwrite")
+        i = 0
+        while i<3:
+            try:
+                pcsSDK.uploadFile(filename["remotePath"],filename["localPath"],ondup="newcopy")
+                sys.stdout.write("uploaded "+filename["localPath"]+"\n")
+                break
+            except:
+                i += 1
     
 def syncToPcs(path,remote,rPath=""):
     global uploadList
@@ -34,7 +42,6 @@ def syncToPcs(path,remote,rPath=""):
     try:
         filelist = pcsSDK.getFileList(remote+rPath)
         for fileItem in filelist["list"]:
-            print fileItem["path"]
             existFile[fileItem["path"]] = fileItem
     except:
         pass
@@ -47,11 +54,20 @@ def syncToPcs(path,remote,rPath=""):
             if u""+tmpName in existFile:
                 print "exist:"+tf
             else:
+                print "add to upload:"+tf
                 uploadList.append({"remotePath":remote+rPath,"localPath":tf})
         elif os.path.isdir(tf):
             syncToPcs(tf,rPath+f+"/")
+
+
 workDir = os.path.dirname(__file__)
+tmpDir = os.path.join(workDir,"tmp")
+if os.path.exists(tmpDir):
+    shutil.rmtree(tmpDir)
+os.mkdir(tmpDir) 
 config = json.loads(open(os.path.join(workDir,"config.json")).read())
+pcsSDK.setAccessToken(config["access_key"])
+pcsSDK.gAppRoot = config["appRoot"]
 rarPaht = ""
 if "rarPath" in config:
     rarPath = config["rarPath"]

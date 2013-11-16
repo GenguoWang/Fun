@@ -7,14 +7,22 @@ import string
 import os
 
 _BOUNDARY_CHARS = string.digits + string.ascii_letters
-gApiKey = "jPNKG9NIr8o2gl0qeidwGddx"
-gSecertKey = "8Xn4m6ir9Ab3xd3BHGwKkzYz54EVoL9U"
-gCallbackUrl = "http://sharemark.tk/baidu/handle.php"
-gBaseAuthUrl = "https://openapi.baidu.com/oauth/2.0/authorize"
-gRefreshToken = "4.499b6935f2b7c3c9609d0472b50844f5.315360000.1697639866.2936395967-1489137"
-gAccessToken = "3.88de92b660bdf9aaa6178e071ca629bd.2592000.1384871866.2936395967-1489137"
+gApiKey = ""
+gSecertKey = ""
+gCallbackUrl = ""
+gBaseAuthUrl = ""
+gRefreshToken = ""
+gAccessToken = ""
 gAppRoot = "/apps/win8pan/"
 gDebug = False
+def setAccessToken(accessKey):
+    url = "http://blog.hifiwiki.net/baidu/getInfo?key="+accessKey
+    req = urllib2.Request(url)
+    response = urllib2.urlopen(req)#,timeout=15)
+    res = response.read()
+    res = json.loads(res)
+    global gAccessToken
+    gAccessToken = res["access_token"]
 def getPath(path):
     if len(path)==0:
         return gAppRoot

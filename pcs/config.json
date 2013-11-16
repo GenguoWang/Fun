@@ -1,11 +1,13 @@
 {
+    "access_key":"4c7c38e1bb9541159b5b49af20ab91486682463c",
+    "appRoot":"/apps/KKBackup/",
     "rarPath":"C:\\Program Files (x86)\\WinRAR\\Rar.exe",
     "path":[
         {
-            "local":"E:\\VSProjects\\sjtujoineducation",
-            "remote":"backup/",
             "rar":true,
-            "rarName":"sjtujoineducation"
+            "local":"E:\\VSProjects\\sjtujoineducation\\",
+            "rarName":"sjtujoineducation",
+            "remote":"backup/"
         }
     ]
 }
