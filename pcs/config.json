@@ -4,9 +4,9 @@
     "rarPath":"C:\\Program Files (x86)\\WinRAR\\Rar.exe",
     "path":[
         {
-            "rar":true,
-            "local":"E:\\VSProjects\\sjtujoineducation\\",
-            "rarName":"sjtujoineducation",
+            "type":"cmd",
+            "cmd":"tar czf /tmp/test.tar.gz -C /home/kingo/ testdir/",
+            "local":"/tmp/test.tar.gz",
             "remote":"backup/"
         }
     ]

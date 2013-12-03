@@ -62,25 +62,34 @@ def syncToPcs(path,remote,rPath=""):
 
 workDir = os.path.dirname(__file__)
 tmpDir = os.path.join(workDir,"tmp")
+
+#clear temporary folder
 if os.path.exists(tmpDir):
     shutil.rmtree(tmpDir)
 os.mkdir(tmpDir) 
+
+#load config
 config = json.loads(open(os.path.join(workDir,"config.json")).read())
 pcsSDK.setAccessToken(config["access_key"])
 pcsSDK.gAppRoot = config["appRoot"]
-rarPaht = ""
+rarPath = ""
 if "rarPath" in config:
     rarPath = config["rarPath"]
-os.system("del /f/s/q "+os.path.join(workDir,"tmp\\*"))
+
+#parse what need to upload
 for backPath in config["path"]:
     if "rar" in backPath and backPath["rar"]:
         print "rar "+backPath["local"]
-        subprocess.call([rarPath,"a","-idq","-r","-ep1",os.path.join(workDir,"tmp\\"+backPath["rarName"]),backPath["local"]])
-        uploadList.append({"remotePath":backPath["remote"],"localPath":os.path.join(workDir,"tmp\\"+backPath["rarName"]+".rar")})
+        subprocess.call([rarPath,"a","-idq","-r","-ep1",os.path.join(tmpDir,backPath["rarName"]),backPath["local"]])
+        uploadList.append({"remotePath":backPath["remote"],"localPath":os.path.join(tmpDir,backPath["rarName"]+".rar")})
+    elif "type" in backPath:
+        if backPath["type"]=="cmd":
+            os.system(backPath["cmd"])
+            uploadList.append({"remotePath":backPath["remote"],"localPath":os.path.join(tmpDir,backPath["local"])})
     else:
         syncToPcs(backPath["local"],backPath["remote"])
+
 print "begin upload"
 for i in range(min(len(uploadList),maxThreadNum)):
     threading.Thread(target=uploadWorker).start()
-os.system("pause")
         
